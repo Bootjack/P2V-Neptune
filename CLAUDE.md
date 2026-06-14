@@ -4,7 +4,8 @@
 Full-fidelity DCS World aircraft mod for the Lockheed P2V-7S (SP-2H) Neptune. Learning project — depth over speed.
 
 ## Key paths
-- **Mod content:** `P2V-7S/` (all DCS mod files)
+- **Mod content:** `P2V-7S/` (all DCS mod files — the only thing the junction exposes to DCS)
+- **Art/working source:** `Source/` (Blender `.blend`, reference, texture source — NOT shipped). Exterior model exports to `P2V-7S/Shapes/P2V-7S.edm`. See `Source/README.md`.
 - **DCS install:** `E:\Program Files\DCS World OpenBeta`
 - **DCS saved games:** `D:\Saved Games\DCS.openbeta`
 - **Deploy target:** `D:\Saved Games\DCS.openbeta\Mods\aircraft\P2V-7S` (junction to `P2V-7S/`)

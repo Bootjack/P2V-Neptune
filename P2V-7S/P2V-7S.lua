@@ -69,6 +69,10 @@ P2V_7S = {
         192, -- tail light
     },
 
+    -- WSTYPE_PLACEHOLDER must also key the unit (WorldID), not just the shape index — without
+    -- it the type registration is incomplete. (Added during crash #6 debugging; correct to keep.)
+    WorldID     = WSTYPE_PLACEHOLDER,
+
     mapclasskey = "P0091000025",
     attribute   = {wsType_Air, wsType_Airplane, wsType_Fighter, WSTYPE_PLACEHOLDER, "Bombers"},
     Categories  = {"{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}", "Interceptor"},
@@ -78,7 +82,9 @@ P2V_7S = {
         aircraft_task(GroundAttack),
         aircraft_task(Reconnaissance),
     },
-    DefaultTask = aircraft_task(AntishipStrike),
+    -- Reconnaissance for now: the aircraft is weaponless (Pylons={}, stores_number=0), so a
+    -- strike default task gives the AI nothing to do. Switch to AntishipStrike once weapons exist.
+    DefaultTask = aircraft_task(Reconnaissance),
 
     M_empty                     = 49935 * POUNDS_TO_KG,
     M_nominal                   = 61153 * POUNDS_TO_KG,
@@ -115,12 +121,58 @@ P2V_7S = {
     bank_angle_max              = 45,
     range                       = 5930,
 
-    thrust_sum_max              = 3500 * 2 * 0.8,  -- placeholder: 2x R-3350 equivalent thrust in kg
+    thrust_sum_max              = 3500 * 2 * 0.8,  -- placeholder (kg), kept consistent with SFM_Data.engine
     has_afteburner              = false,
     has_differential_stabilizer = false,
     thrust_sum_ab               = 3500 * 2 * 0.8,
     average_fuel_consumption    = 0.5,
     is_tanker                   = false,
+
+    -- SFM_Data: Simplified Flight Model aerodynamics + engine tables. REQUIRED while AFMenabled
+    -- = false — the SFM/AI flight model is built from this at spawn, and its ABSENCE was crash
+    -- #6 (a null-deref in the flight-model FSM, invariant to model/params/make_flyable). These
+    -- are rough placeholders so the aircraft spawns and flies adequately; the EFM (Neptune.dll)
+    -- will replace this in a later phase. See DEVLOG 2026-06-14.
+    SFM_Data = {
+        aerodynamics = {
+            Cy0      = 0.0,
+            Mzalfa   = 6.0,
+            Mzalfadt = 0.7,
+            kjx      = 4.5,
+            kjz      = 0.0012,
+            Czbe     = -0.016,
+            cx_gear  = 0.02,
+            cx_flap  = 0.05,
+            cy_flap  = 0.30,
+            cx_brk   = 0.0,
+            table_data = {
+            --   M      Cx0     Cya     B      B4    Omxmax  Aldop   Cymax
+                {0.0,   0.020,  0.090,  0.15,  0.0,   1.0,   18.0,   1.4},
+                {0.2,   0.020,  0.090,  0.15,  0.0,   2.0,   18.0,   1.4},
+                {0.4,   0.022,  0.085,  0.15,  0.0,   3.0,   16.0,   1.2},
+                {0.5,   0.026,  0.080,  0.16,  0.0,   3.0,   14.0,   1.0},
+            },
+        },
+        engine = {
+            Nmg     = 60.0,
+            MinRUD  = 0,
+            MaxRUD  = 1,
+            MaksRUD = 1,
+            ForsRUD = 1,
+            typeng  = 0,        -- E_TURBOJET (simplest placeholder until EFM models recip+jet)
+            hMaxEng = 8,
+            dcx_eng = 0.01,
+            cemax   = 0.2,
+            cefor   = 0.2,
+            dpdh_m  = 5000,
+            dpdh_f  = 5000,
+            table_data = {
+            --   M     Pmax    Pfor
+                {0.0,  5600,   5600},
+                {0.5,  4000,   4000},
+            },
+        },
+    },
 
     tand_gear_max               = math.rad(60.0),
 
@@ -165,7 +217,8 @@ P2V_7S = {
         },
     },
 
-    sounderName          = "Aircraft/Planes/P2V-7S",
+    -- sounderName left disabled until sound files exist (an empty Sounds path caused crash #1).
+    -- sounderName          = "Aircraft/Planes/P2V-7S",
 
     crew_size    = 7,
     crew_members =
@@ -203,7 +256,17 @@ P2V_7S = {
 
     Pylons = {},
 
-    Damage = {},
+    -- Damage / collision model. Must be a 1:1 set with the collision-shell objects in the .edm:
+    -- every key needs a matching shell (else "No cell for property records") and every shell
+    -- needs a key here (else "No property record for cell"). Keys must be names DCS recognizes
+    -- (see DCS\Scripts\Aircrafts\_Common\Damage.lua). Add a key only when you add the shell.
+    Damage = verbose_to_dmg_properties
+    {
+        ["GEAR_FRONT"] = {critical_damage = 3},  -- cell 8  (nose gear)
+        ["GEAR_L"]     = {critical_damage = 3},  -- cell 15 (left main gear)
+        ["GEAR_R"]     = {critical_damage = 3},  -- cell 16 (right main gear)
+        ["MAIN"]       = {critical_damage = 3},  -- cell 10 (fuselage hull)
+    },
 
     DamageParts = {},
 

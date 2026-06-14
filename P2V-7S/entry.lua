@@ -66,6 +66,8 @@ mount_vfs_texture_path  (current_mod_path.."/Textures")
 -- mount_vfs_sound_path    (current_mod_path.."/Sounds")  -- enable when sound files exist
 
 -- Flight model
+-- BISECT (crash #6): re-enabled make_flyable. With good (A-4) params now, an aircraft with no
+-- flight model registered is the obvious remaining deviation from the working A-4E-C template.
 if AFMenabled == true then
     dofile(current_mod_path.."/Entry/Suspension.lua")
     local FM =
