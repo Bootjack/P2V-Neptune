@@ -1,0 +1,2 @@
+-- Options database (placeholder)
+-- Will be populated when mod options are implemented

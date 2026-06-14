@@ -1,0 +1,2 @@
+-- Options display data (placeholder)
+-- Will be populated when mod options are implemented

@@ -1,0 +1,2 @@
+-- P2V-7S weapons declarations
+-- Phase 7: depth charges, torpedoes, bombs, rockets, mines

@@ -1,0 +1,2 @@
+-- Cockpit material definitions (placeholder)
+-- Will be populated when cockpit model is created
