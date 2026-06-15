@@ -176,6 +176,21 @@ P2V_7S = {
 
     tand_gear_max               = math.rad(60.0),
 
+    -- SFM landing-gear geometry. Without wheel contact points the SFM rests the aircraft on the
+    -- Bounding_Box instead of the gear. Coords are DCS model space: +X nose, +Y up, +Z right
+    -- (main_gear_pos is one side; DCS mirrors it). These are ESTIMATES — measure the actual wheel
+    -- contact positions off your gear shells in Blender and replace. y must reach the ground.
+    nose_gear_pos                            = {2.01895, -2.89729, 0.0},
+    main_gear_pos                            = {-4.89276, -2.45525, 3.92876},
+    nose_gear_amortizer_direct_stroke        = 0.0,
+    nose_gear_amortizer_reversal_stroke      = -0.30,
+    nose_gear_amortizer_normal_weight_stroke = -0.15,
+    main_gear_amortizer_direct_stroke        = 0.0,
+    main_gear_amortizer_reversal_stroke      = -0.40,
+    main_gear_amortizer_normal_weight_stroke = -0.20,
+    nose_gear_wheel_diameter                 = 0.9,
+    main_gear_wheel_diameter                 = 1.2,
+
     engines_count    = 4,
     engines_nozzles  =
     {

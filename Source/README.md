@@ -1,9 +1,6 @@
 # Source / working art files (NOT shipped)
 
-Everything under `Source/` is working material for building the mod — it is
-**not** part of the deployed mod and is never exposed to DCS. The DCS junction
-points only at `../P2V-7S/`, so keep heavy/working files here to keep the
-shipped mod lean.
+Everything under `Source/` is working material for building the mod — it is **not** part of the deployed mod and is never exposed to DCS. The DCS junction points only at `../P2V-7S/`, so keep heavy/working files here to keep the shipped mod lean.
 
 ```
 Source/
@@ -22,6 +19,4 @@ Source/
 | Exterior textures    | `../P2V-7S/Textures/`                  | Mounted in `entry.lua`. |
 | Cockpit textures     | `../P2V-7S/Cockpit/Textures/`          | Mounted in `entry.lua`. |
 
-The mod is a live junction, so overwriting `P2V-7S/Shapes/P2V-7S.edm` updates
-DCS immediately — just restart DCS (or reload the mission) to see changes; no
-`deploy.ps1` re-run needed.
+The mod is a live junction, so overwriting `P2V-7S/Shapes/P2V-7S.edm` updates DCS immediately — just restart DCS (or reload the mission) to see changes; no `deploy.ps1` re-run needed.
