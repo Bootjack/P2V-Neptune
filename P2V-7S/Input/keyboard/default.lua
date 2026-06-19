@@ -1,9 +1,8 @@
-local folder = LockOn_Options.script_path or ""
 local cscripts = folder.."../../Cockpit/Scripts/"
 dofile(cscripts.."devices.lua")
 dofile(cscripts.."command_defs.lua")
 
-local res = external_profile("Config/Input/Aircrafts/common_joystick_binding.lua")
+local res = external_profile("Config/Input/Aircrafts/common_keyboard_binding.lua")
 
 join(res.keyCommands, {
     -- Gear
@@ -28,6 +27,12 @@ join(res.keyCommands, {
 
     -- Electrical
     {combos = {{key = 'B', reformers = {'LShift'}}}, down = Keys.BatteryPower, name = _('Battery Power Toggle'), category = {_('Systems')}},
+
+    -- Crew seats
+    {combos = {{key = '1'}}, down = iCommandViewCockpitChangeSeat, value_down = 1, name = _('Pilot Seat'),     category = {_('View Cockpit')}},
+    {combos = {{key = '2'}}, down = iCommandViewCockpitChangeSeat, value_down = 2, name = _('Copilot Seat'),   category = {_('View Cockpit')}},
+    {combos = {{key = '3'}}, down = iCommandViewCockpitChangeSeat, value_down = 3, name = _('Navigator Seat'), category = {_('View Cockpit')}},
+    {combos = {{key = '4'}}, down = iCommandViewCockpitChangeSeat, value_down = 4, name = _('Operator Seat'),  category = {_('View Cockpit')}},
 })
 
 return res

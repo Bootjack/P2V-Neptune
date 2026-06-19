@@ -133,7 +133,8 @@ Milestone test:
 - No DCS crash or error log spam
 
 ---
-Phase 2: Clickable Cockpit Framework
+
+### Phase 2: Clickable Cockpit Framework
 
 Goal: Switches click, knobs turn, lights illuminate. No systems logic yet — just input → animation.
 

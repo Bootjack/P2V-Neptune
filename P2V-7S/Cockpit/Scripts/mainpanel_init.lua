@@ -1,4 +1,4 @@
-shape_name       = "Cockpit_P2V7S"
+shape_name       = "Cockpit_P2V-7S"
 is_EDM           = true
 new_model_format = true
 
@@ -10,7 +10,7 @@ ambient_color_from_panels    = {35, 25, 25}
 
 dusk_border          = 0.4
 draw_pilot           = false
-use_external_views   = false
+use_external_views   = true
 
 day_texture_set_value   = 0.0
 night_texture_set_value = 0.1

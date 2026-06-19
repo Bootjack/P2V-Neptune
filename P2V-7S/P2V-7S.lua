@@ -31,7 +31,7 @@ P2V_7S = {
         "USA",
     },
 
-    HumanCockpit         = false,
+    HumanCockpit         = true,
     HumanCockpitPath     = current_mod_path..'/Cockpit/',
     Picture              = "P2V-7S.png",
     Rate                 = 30,
@@ -180,8 +180,8 @@ P2V_7S = {
     -- Bounding_Box instead of the gear. Coords are DCS model space: +X nose, +Y up, +Z right
     -- (main_gear_pos is one side; DCS mirrors it). These are ESTIMATES — measure the actual wheel
     -- contact positions off your gear shells in Blender and replace. y must reach the ground.
-    nose_gear_pos                            = {2.01895, -2.89729, 0.0},
-    main_gear_pos                            = {-4.89276, -2.45525, 3.92876},
+    nose_gear_pos                            = {2.01895, -3.1414, 0.0},
+    main_gear_pos                            = {-3.1816, -3.120, 3.7915},
     nose_gear_amortizer_direct_stroke        = 0.0,
     nose_gear_amortizer_reversal_stroke      = -0.30,
     nose_gear_amortizer_normal_weight_stroke = -0.15,
@@ -243,6 +243,13 @@ P2V_7S = {
             ejection_seat_name  = 0,
             pos                 = {10.5, 0.5, -0.4},
             canopy_pos          = {10.5, 1.5, -0.4},
+            g_suit              = 3.0,
+        },
+        [2] =
+        {
+            ejection_seat_name  = 0,
+            pos                 = {10.5, 0.5, 0.4},
+            canopy_pos          = {10.5, 1.5, 0.4},
             g_suit              = 3.0,
         },
     },

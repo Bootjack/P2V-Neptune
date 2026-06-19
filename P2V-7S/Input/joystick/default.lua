@@ -1,4 +1,3 @@
-local folder = LockOn_Options.script_path or ""
 local cscripts = folder.."../../Cockpit/Scripts/"
 dofile(cscripts.."devices.lua")
 dofile(cscripts.."command_defs.lua")
@@ -17,6 +16,7 @@ join(res.keyCommands, {
 
     -- Brakes
     {down = Keys.BrakesOn, up = Keys.BrakesOff, name = _('Wheel Brakes'), category = {_('Flight Control')}},
+
 })
 
 return res

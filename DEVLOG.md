@@ -84,3 +84,42 @@
 ### Current state
 - P2V-7S spawns as AI, renders, and flies (rough placeholder SFM). `P2V-7S.lua` rolled back from the A-4 diagnostic clone to real P2V values; debugging changes reverted; `SFM_Data` placeholder + `WorldID` kept. `sounderName` still disabled (no sound files yet — crash #1). Textures show DCS "missing" placeholders (model is untextured — expected).
 - Next: real cockpit `.edm` + clickable framework (Phase 2), and eventually the EFM (`Neptune.dll`) to replace the placeholder `SFM_Data`.
+
+## 2026-06-16 to 2026-06-19 — Phase 1: Cockpit integration
+
+### Getting a player into the seat
+
+#### Shape name must match filename exactly
+- `mainpanel_init.lua:shape_name` must equal the `.edm` filename without extension. Our export was `Cockpit_P2V-7S.edm` but `shape_name = "Cockpit_P2V7S"` (no hyphen) → `ERROR GRAPHICSVISTA: Can't open model Cockpit_P2V7S`. Fixed to `"Cockpit_P2V-7S"`. DCS resolves shape by filename; there is no embedded name in the EDM to match against.
+
+#### White-screen / glare in an untextured cockpit
+- `EDM_Default_Material` has a white albedo. The cockpit lighting path (flat `ambient_light = {255,255,255}`) causes untextured surfaces to blow out under HDR bloom, making the interior look like solid white glare. The external model is fine because it uses a different lighting path. Fix: assign a dark-gray diffuse material in Blender. The `ambient_light` reference value from A-4E-C is correct; don't lower it permanently.
+
+#### How DCS places the cockpit model and pilot head
+- **`CockpitLocalPoint` for view `[1]`** does two things: it places the cockpit EDM's world origin at that position in airframe coordinates, AND it sets the camera there. The EDM's origin must therefore be modeled at the pilot's head (eye position).
+- **`CockpitLocalPoint` for view `[2]` and beyond** sets only the camera position in airframe coordinates. The cockpit geometry does not move. Confirmed in-game: changing view 2's `CockpitLocalPoint` shifted only the player camera, leaving the cockpit model fixed.
+- **`EyePoint`** is a fine-tune offset from `CockpitLocalPoint` but is clamped by `limits_6DOF`. Cannot be used for large displacements (e.g., left-seat to right-seat offset) without widening the limits.
+- **`limits_6DOF`** is in metres. The A-4E-C values (`x={-0.10,0.40}`, `y={-0.30,0.15}`, `z={-0.25,0.25}`) represent normal in-seat head lean range. Setting them to ±20 is a useful diagnostic to fly the camera around and locate geometry, but makes MMB pan hypersensitive.
+
+#### `use_external_views`
+- `use_external_views = false` in `mainpanel_init.lua` disables F2 external view from the human cockpit. Set to `true` to allow it. (The flag had no effect when the aircraft was AI-only because the cockpit script wasn't loaded.)
+
+### Input bindings
+
+#### `LockOn_Options` is nil in the input binding context
+- Input binding scripts run in a LuaGUI context where `LockOn_Options` does not exist. Referencing it crashes the script on line 1, silently discarding all custom bindings — DCS falls back to engine defaults with no error visible to the user. The error appears in `dcs.log` as `attempt to index global 'LockOn_Options' (a nil value)`.
+- Fix: use the DCS-injected global `folder` directly (as A-4E-C does): `local cscripts = folder.."../../Cockpit/Scripts/"`.
+
+#### Other input binding pitfalls found
+- The keyboard `default.lua` must load `common_keyboard_binding.lua`, not `common_joystick_binding.lua`.
+- `category` in binding entries must be a table: `category = {_('Systems')}`, not a bare string.
+
+#### Crew seat switching
+- `iCommandViewCockpitChangeSeat` (ID 1602) is a DCS engine global injected into all input binding contexts. Not defined in any mod file — use the bare name. `value_down = N` selects station N.
+- Related globals (all engine-level): `iCommandViewCockpitSetPilotSeat = 1603`, `iCommandViewCockpitSetOperatorSeat = 1604`, `iCommandViewCockpitSetGunnerSeat1 = 1605`, `iCommandViewCockpitSetGunnerSeat2 = 1606`.
+- Multiple `ViewSettings.Cockpit[N]` entries + corresponding `SnapViews[N]` + `crew_members[N]` in `P2V-7S.lua` are all required for additional stations to be functional.
+
+### Current state
+- Player can occupy the pilot seat (view 1) and switch to the copilot seat (view 2) via the `2` key. F2 external view works. Input bindings appear correctly in DCS Controls under their categories.
+- Cockpit geometry is a rough blockout; still untextured (dark-gray material applied to suppress glare).
+- Next: dial in exact seat positions from Blender measurements, then Phase 2 clickable framework.

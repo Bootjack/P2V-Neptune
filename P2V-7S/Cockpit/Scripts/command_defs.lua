@@ -5,6 +5,15 @@ local function __custom_counter()
     return __count_custom
 end
 
+-- DCS engine-level view/seat globals (injected into every input script environment).
+-- Defined here as documentation and fallback in case a DCS version doesn't inject them.
+-- Source: https://modding.caffeinesimulations.com/Database/iCommands/
+iCommandViewCockpitChangeSeat    = iCommandViewCockpitChangeSeat    or 1602
+iCommandViewCockpitSetPilotSeat  = iCommandViewCockpitSetPilotSeat  or 1603
+iCommandViewCockpitSetOperatorSeat = iCommandViewCockpitSetOperatorSeat or 1604
+iCommandViewCockpitSetGunnerSeat1 = iCommandViewCockpitSetGunnerSeat1 or 1605
+iCommandViewCockpitSetGunnerSeat2 = iCommandViewCockpitSetGunnerSeat2 or 1606
+
 Keys =
 {
     -- Standard DCS command IDs
