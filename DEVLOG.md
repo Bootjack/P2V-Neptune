@@ -122,4 +122,27 @@
 ### Current state
 - Player can occupy the pilot seat (view 1) and switch to the copilot seat (view 2) via the `2` key. F2 external view works. Input bindings appear correctly in DCS Controls under their categories.
 - Cockpit geometry is a rough blockout; still untextured (dark-gray material applied to suppress glare).
-- Next: dial in exact seat positions from Blender measurements, then Phase 2 clickable framework.
+
+## 2026-06-27 — Phase 1 final: first clickable instrument (proof-of-concept ammeter)
+
+### What was built
+- **Clickable framework scaffolding** — `clickable_defs.lua` (TUMB helper), `clickabledata.lua` (elements table). DCS loads `clickabledata.lua` automatically alongside `mainpanel_init.lua`; no explicit dofile needed.
+- **Battery toggle switch** — `elements["PNT_BATTERY_SW"]`, `device_commands.BatterySwitch` (ID 3000), arg 50 in the 3D model. `default_2_position_tumb` sends value=+1 (on) or -1 (off) to `SetCommand`. `updatable=true` allows the device to sync the arg position back (used for HOT start).
+- **Ammeter gauge** — `parameter_name = "AMMETER"`, arg 51. Reads a normalized −1…+1 value exported by `electric_system.lua` via `get_param_handle("AMMETER")`. −1 = full discharge left, 0 = zero (center), +1 = full charge right.
+- **Simplified electrical model** — Battery OFF → 0 A. Battery ON with no alternator → −0.5 (−30 A / 60 A full-scale), needle half-left. Alternator will pull it positive when added later.
+- **Keyboard ↔ clickable sync** — keyboard shortcut (`LShift+B`, Keys.BatteryPower) calls `performClickableAction(BatterySwitch, ±1, true)` to move the 3D switch without double-firing SetCommand.
+- **HOT start** — `post_initialize` detects `GROUND_HOT`/`AIR_HOT` and sets battery ON + syncs switch arg.
+
+### Blender side (still needed)
+For the Lua to animate anything visible, the cockpit EDM needs two new animated objects:
+- **Battery switch handle** — set its EDM argument to **50**; keyframe arg=0 at OFF position, arg=1 at ON position.
+- **Ammeter needle** — set its EDM argument to **51**; keyframe at arg=−1 (full left rotation), arg=0 (center/up), arg=+1 (full right rotation).
+
+### Architecture lesson learned
+The clickable data flow in DCS:
+1. Player clicks element in `clickabledata.lua` → DCS updates the model arg directly via `arg_value` and `arg_lim`.
+2. DCS also calls `SetCommand(command, value)` on the device specified by `elements[...].device`.
+3. Device script updates internal state; exports named params via `get_param_handle`.
+4. `mainpanel_init.lua` `CreateGauge("parameter")` gauges read those params each frame and drive their `arg_number` in the model.
+- Switch arg (50): driven by clicks and `performClickableAction` — no gauge needed.
+- Needle arg (51): driven by the "AMMETER" parameter gauge in `mainpanel_init.lua` each frame.

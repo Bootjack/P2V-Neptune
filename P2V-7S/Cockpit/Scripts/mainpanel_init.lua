@@ -91,3 +91,21 @@ Flaps.arg_number             = 9
 Flaps.input                  = {0, 1}
 Flaps.output                 = {0, 1}
 Flaps.parameter_name         = "FLAPS"
+
+---------------------------------------------------------------
+-- Electrical instruments
+---------------------------------------------------------------
+-- Battery switch position (arg 50) is driven entirely by the clickable
+-- framework; no gauge needed here — DCS updates the arg directly on click.
+
+-- Ammeter needle (arg 51).
+-- Input range matches the normalized value exported by electric_system.lua:
+--   -1 = full discharge (battery powering bus, needle hard left)
+--    0 = zero current (needle straight up)
+--   +1 = full charge (alternator charging battery, needle hard right)
+-- Output mirrors input 1:1; the EDM keyframes define the physical rotation.
+Ammeter                      = CreateGauge("parameter")
+Ammeter.arg_number           = 51
+Ammeter.input                = {-1, 1}
+Ammeter.output               = {-1, 1}
+Ammeter.parameter_name       = "AMMETER"
